@@ -1,9 +1,10 @@
 <?php
 
-declare(strict_types = 1);
+
+namespace Framework\Command;
+
 
 use Framework\Registry;
-use framework\Command\CommandInterface;
 use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
@@ -18,8 +19,9 @@ use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\RouteCollection;
 
 
-class Kernel extends CommandInterface
+abstract class Route implements CommandInterface
 {
+
     /**
      * @var RouteCollection
      */
@@ -30,51 +32,17 @@ class Kernel extends CommandInterface
      */
     protected $containerBuilder;
 
-    public function __construct(ContainerBuilder $containerBuilder)
-    {
-        $this->containerBuilder = $containerBuilder;
-    }
-
-    /**
-     * @param Request $request
-     * @return Response
-     */
-    public function handle(Request $request): Response
-    {
-        $this->registerConfigs();
-        $this->registerRoutes();
-
-        return $this->process($request);
-    }
-
-    /**
-     * @return void
-     */
-   /* protected function registerConfigs(): void
-    {
-        try {
-            $fileLocator = new FileLocator(__DIR__ . DIRECTORY_SEPARATOR . 'config');
-            $loader = new PhpFileLoader($this->containerBuilder, $fileLocator);
-            $loader->load('parameters.php');
-        } catch (\Throwable $e) {
-            die('Cannot read the config file. File: ' . __FILE__ . '. Line: ' . __LINE__);
-        }
-    }*/
-
-    /**
-     * @return void
-     */
-    /*protected function registerRoutes(): void
+    public function registerRoutes(): void
     {
         $this->routeCollection = require __DIR__ . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'routing.php';
         $this->containerBuilder->set('route_collection', $this->routeCollection);
-    }*/
+    }
 
     /**
      * @param Request $request
      * @return Response
      */
-    protected function process(Request $request): Response
+    public function process(Request $request): Response
     {
         $matcher = new UrlMatcher($this->routeCollection, new RequestContext());
         $matcher->getContext()->fromRequest($request);
