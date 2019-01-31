@@ -4,12 +4,8 @@ declare(strict_types = 1);
 
 namespace Model\Entity;
 
-class Role
+class Role extends FirstEntity
 {
-    /**
-     * @var int
-     */
-    private $id;
 
     /**
      * @var string
@@ -31,14 +27,6 @@ class Role
         $this->id = $id;
         $this->title = $title;
         $this->type = $type;
-    }
-
-    /**
-     * @return int
-     */
-    public function getId(): int
-    {
-        return $this->id;
     }
 
     /**
