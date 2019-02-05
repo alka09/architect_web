@@ -2,8 +2,6 @@
 
 declare(strict_types = 1);
 
-use Framework\Registry;
-use framework\Command\CommandInterface;
 use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
@@ -17,8 +15,13 @@ use Symfony\Component\Routing\Matcher\UrlMatcher;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\RouteCollection;
 
+use Framework\Command\CommandArgs;
+use Framework\Command\RegisterConfigs;
+use Framework\Command\Route;
+use Framework\Command\CommandProcess;
 
-class Kernel extends CommandInterface
+
+class Kernel
 {
     /**
      * @var RouteCollection
@@ -30,21 +33,31 @@ class Kernel extends CommandInterface
      */
     protected $containerBuilder;
 
-    public function __construct(ContainerBuilder $containerBuilder)
+    /**
+     * @param array
+     */
+
+    public final function __construct(ContainerBuilder $containerBuilder)
     {
-        $this->containerBuilder = $containerBuilder;
+        $this->params = [
+            'dir' => __DIR__,
+            'containerBuilder' =>$containerBuilder
+        ];
     }
 
     /**
      * @param Request $request
      * @return Response
      */
-    public function handle(Request $request): Response
+    public final function handle(Request $request): Response
     {
-        $this->registerConfigs();
-        $this->registerRoutes();
+        $this->params['request'] = $request;
 
-        return $this->process($request);
+        $this->params = (new RegisterConfigs())->execute($this->params);
+        $this->params = (new Route())->execute($this->params);
+        $this->params = (new CommandProcess())->execute($this->params);
+
+        return $this->params['responce'];
     }
 
     /**
@@ -74,7 +87,7 @@ class Kernel extends CommandInterface
      * @param Request $request
      * @return Response
      */
-    protected function process(Request $request): Response
+    /*protected function process(Request $request): Response
     {
         $matcher = new UrlMatcher($this->routeCollection, new RequestContext());
         $matcher->getContext()->fromRequest($request);
@@ -97,5 +110,5 @@ class Kernel extends CommandInterface
 
             return new Response($error, Response::HTTP_INTERNAL_SERVER_ERROR);
         }
-    }
+    }*/
 }

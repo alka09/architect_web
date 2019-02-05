@@ -1,48 +1,41 @@
 <?php
 
+declare(strict_types = 1);
 
 namespace Framework\Command;
 
-
-use Framework\Registry;
-use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\Config\FileLocator;
-use Symfony\Component\HttpKernel\Controller\ControllerResolver;
-use Symfony\Component\HttpKernel\Controller\ArgumentResolver;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Session\Session;
-use Symfony\Component\Routing\Exception\ResourceNotFoundException;
-use Symfony\Component\Routing\Matcher\UrlMatcher;
-use Symfony\Component\Routing\RequestContext;
-use Symfony\Component\Routing\RouteCollection;
-
-
-abstract class Route implements CommandInterface
+class Route implements CommandInterface
 {
 
     /**
-     * @var RouteCollection
+     * @param array $params * @return array
      */
-    protected $routeCollection;
+
+    public function execute(array $params): array {
+        $params['routeCollection'] = require $params['dir'] . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'routing.php';
+        $params['containerBuilder'] ->set('route_collection', $params['routeCollection']);
+        return $params;
+    }
+
+
+    //protected $routeCollection;
 
     /**
      * @var ContainerBuilder
      */
-    protected $containerBuilder;
+    /*protected $containerBuilder;
 
     public function registerRoutes(): void
     {
         $this->routeCollection = require __DIR__ . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'routing.php';
         $this->containerBuilder->set('route_collection', $this->routeCollection);
-    }
+    }*/
 
     /**
      * @param Request $request
      * @return Response
      */
-    public function process(Request $request): Response
+    /*public function process(Request $request): Response
     {
         $matcher = new UrlMatcher($this->routeCollection, new RequestContext());
         $matcher->getContext()->fromRequest($request);
@@ -65,5 +58,5 @@ abstract class Route implements CommandInterface
 
             return new Response($error, Response::HTTP_INTERNAL_SERVER_ERROR);
         }
-    }
+    }*/
 }

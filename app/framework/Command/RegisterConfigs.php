@@ -1,52 +1,29 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Администратор
- * Date: 31.01.2019
- * Time: 11:51
- */
+declare(strict_types = 1);
 
 namespace Framework\Command;
 
-use Framework\Registry;
+
 use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
-use Symfony\Component\HttpKernel\Controller\ControllerResolver;
-use Symfony\Component\HttpKernel\Controller\ArgumentResolver;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Session\Session;
-use Symfony\Component\Routing\Exception\ResourceNotFoundException;
-use Symfony\Component\Routing\Matcher\UrlMatcher;
-use Symfony\Component\Routing\RequestContext;
-use Symfony\Component\Routing\RouteCollection;
+use Throwable;
 
 
-abstract class RegisterConfigs implements CommandInterface
+class RegisterConfigs implements CommandInterface
 {
 
-    /**
-     * @var RouteCollection
-     */
-    protected $routeCollection;
+    /**@param array $params * @return array*/
 
-    /**
-     * @var ContainerBuilder
-     */
-    protected $containerBuilder;
-
-    /**
-     * @return void
-     */
-    protected function registerConfigs(): void
+    public function execute(array $params): array
     {
         try {
-            $fileLocator = new FileLocator(__DIR__ . DIRECTORY_SEPARATOR . 'config');
-            $loader = new PhpFileLoader($this->containerBuilder, $fileLocator);
+            $fileLocator = new FileLocator($params['dir'] . DIRECTORY_SEPARATOR . 'config');
+            $loader = new PhpFileLoader($params['containerBuilder'], $fileLocator);
             $loader->load('parameters.php');
         } catch (\Throwable $e) {
             die('Cannot read the config file. File: ' . __FILE__ . '. Line: ' . __LINE__);
         }
+
+        return $params;
     }
 }
