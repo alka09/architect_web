@@ -1,12 +1,15 @@
 <?php
 
-namespace Framework\Command;
+declare(strict_types = 1);
 
+namespace Framework\Command;
 
 interface CommandInterface
 {
-    public function execute();
-    public function registerConfig();
-    public function registerRoutes();
-
+    /**
+     * @param array $params
+     *
+     * @return array
+     */
+    public function execute(array $params): array;
 }
