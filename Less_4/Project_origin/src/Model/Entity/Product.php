@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Model\Entity;
 
@@ -41,6 +41,11 @@ class Product
         return $this->id;
     }
 
+    public function setId(int $id): void
+    {
+        $this->id = $id;
+    }
+
     /**
      * @return string
      */
@@ -49,12 +54,22 @@ class Product
         return $this->name;
     }
 
+    public function setName(string $name): void
+    {
+        $this->name = $name;
+    }
+
     /**
      * @return float
      */
     public function getPrice(): float
     {
         return $this->price;
+    }
+
+    public function setPrice(float $price): void
+    {
+        $this->price = $price;
     }
 
     /**
@@ -68,4 +83,5 @@ class Product
             'price' => $this->price,
         ];
     }
+
 }

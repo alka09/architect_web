@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Model\Repository;
 
@@ -8,6 +8,8 @@ use Model\Entity;
 
 class Product
 {
+
+
     /**
      * Поиск продуктов по массиву id
      *
@@ -21,8 +23,13 @@ class Product
         }
 
         $productList = [];
+        $product = new Entity\Product(1, 'test', 200);
         foreach ($this->getDataFromSource(['id' => $ids]) as $item) {
-            $productList[] = new Entity\Product($item['id'], $item['name'], $item['price']);
+            $cloneProduct = clone $product;
+            $cloneProduct->setId($item['id']);
+            $cloneProduct->setName($item['name']);
+            $cloneProduct->setPrice($item['price']);
+            $productList[] = $cloneProduct;
         }
 
         return $productList;
@@ -36,8 +43,13 @@ class Product
     public function fetchAll(): array
     {
         $productList = [];
+        $product = new Entity\Product(1, 'test', 200);
         foreach ($this->getDataFromSource() as $item) {
-            $productList[] = new Entity\Product($item['id'], $item['name'], $item['price']);
+            $cloneProduct = clone $product;
+            $cloneProduct->setId($item['id']);
+            $cloneProduct->setName($item['name']);
+            $cloneProduct->setPrice($item['price']);
+            $productList[] = $cloneProduct;
         }
 
         return $productList;
