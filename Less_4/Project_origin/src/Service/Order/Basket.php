@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Service\Order;
 
@@ -14,6 +14,8 @@ use Service\Discount\NullObject;
 use Service\User\ISecurity;
 use Service\User\Security;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Service\Order\BasketBuilder;
+
 
 class Basket
 {
@@ -79,7 +81,9 @@ class Basket
      *
      * @return void
      */
-    public function checkout(): void
+
+
+   /* public function checkout(): void
     {
         (new BasketBuilder())
             ->setBuilling(new Card())
@@ -89,9 +93,19 @@ class Basket
             ->setProducts($this->getProductsInfo())
             ->build()
             ->checkoutProcess();
-    }
+    }*/
 
-    /**
+   public function checkout(BasketBuilder $basketBuilder): void
+   {
+       $basketBuilder->setPayer(new Card());
+       $basketBuilder->setDiscounter(new NullObject());
+       $basketBuilder->setCommunicator(new Email());
+       $basketBuilder->setSecurity(new Security($this->session));
+       $basketBuilder->setProductsInBasket($this->getProductsInfo());
+       (new OrderProcess($basketBuilder))->orderProcess();
+
+   }
+   /**
      * Фабричный метод для репозитория Product
      *
      * @return Model\Repository\Product

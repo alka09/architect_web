@@ -5,6 +5,9 @@ declare(strict_types = 1);
 namespace Service\Product;
 
 use Model;
+use Service\Sorting\NameSorter;
+use Service\Sorting\PriceSorter;
+use Service\Sorting\ProductSorter;
 
 class Product
 {
@@ -34,6 +37,14 @@ class Product
         // Применить паттерн Стратегия
         // $sortType === 'price'; // Сортировка по цене
         // $sortType === 'name'; // Сортировка по имени
+
+        $sorter = new ProductSorter();
+        if ($sortType == 'name') {
+            $productList = $sorter->sort(new NameSorter(), $productList);
+        }
+        if ($sortType == 'price') {
+            $productList = $sorter->sort(new PriceSorter(), $productList);
+        }
 
         return $productList;
     }
